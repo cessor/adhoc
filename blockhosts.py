@@ -23,7 +23,7 @@ class Host(object):
         domain_parts = self._name.split('.')
         return len(domain_parts) > 2
 
-    def domains(self):
+    def __iter__(self):
         yield self._name
         if not self._has_subdomain():
             yield 'www.' + self._name
@@ -33,9 +33,9 @@ class Hosts(object):
     def __init__(self, hosts):
         self._hosts = hosts
 
-    def domains(self):
+    def __iter__(self):
         for host in self._hosts:
-            yield from host.domains()
+            yield from host
 
 
 class Lines(object):
@@ -49,22 +49,12 @@ class Lines(object):
                     continue
                 yield line.strip()
 
-    def append(self, entries):
-        with self._path.open('a') as file:
-            file.write(os.linesep)
-            for entry in entries:
-                line = f"{entry}{os.linesep}"
-                file.write(line)
+    def write(self, content):
+        with self._path.open('w') as file:
+            file.write(content)
 
-    def clear(self):
-        # https://stackoverflow.com/a/4914288/1203756
-        self._path.open('w').close()
-
-    def overwrite(self, lines):
-        # This is not ideal, here it leaks
-        # That lines is a filelike abstraction.
-        # I don't want to pass a path object, however.
-        self._path.replace(lines._path)
+    def print(self):
+        print(self._path.open().read())
 
 
 class Localhost(object):
@@ -73,32 +63,38 @@ class Localhost(object):
 
 
 class Program(object):
-    def __init__(self, hosts_file, temp_file, block_with, hosts):
+    def __init__(self, hosts_file, block_with, hosts):
         self._hosts_file = hosts_file
-        self._temp_file = temp_file
         self._blocking_entry = block_with
         self._hosts = hosts
 
     def block(self):
         '''Blocks the hosts'''
-        self._hosts_file.append(
-            (self._blocking_entry.entry(domain)
-             for domain in self._hosts.domains())
+        self._hosts_file.write(
+            os.linesep.join(
+                [
+                    *[line for line in self._hosts_file],
+                    *[self._blocking_entry.entry(host) for host in self._hosts]
+                ]
+            )
         )
 
     def unblock(self):
         '''Unblocks the hosts'''
-        domains = list(self._hosts.domains())
-        self._temp_file.clear()
-        self._temp_file.append(
+        hosts = list(self._hosts)
+        content = os.linesep.join(
             line for line in self._hosts_file
-            if not any(domain in line for domain in domains)
+            if not any(host in line for host in hosts)
         )
-        self._temp_file.overwrite(self._hosts_file)
+        self._hosts_file.write(content)
 
     def print(self):
         '''Displays the contents of the etc/hosts file'''
-        print(os.linesep.join(self._hosts_file))
+        self._hosts_file.print()
+
+    def hosts(self):
+        '''List the hosts'''
+        print(os.linesep.join(self._hosts))
 
     def help(self):
         '''Prints this help'''
@@ -106,23 +102,22 @@ class Program(object):
             method for method in dir(self)
             if not method.startswith('_')
         ]
-        for method in sorted(methods):
+        for method in methods:
             print(method)
             print('\t', getattr(Program, method).__doc__)
 
         print('test')
         print('\t Use a local file to test (./etc_hosts)')
 
+
 if __name__ == '__main__':
     import sys
     windows = os.environ.get('SYSTEMROOT')
+
     program = Program(
         hosts_file=Lines(
             Path('./etc_hosts') if 'test' in sys.argv else
             Path(windows) / "System32/drivers/etc/hosts"
-        ),
-        temp_file=Lines(
-            Path('./tmp')
         ),
         block_with=BlockingEntry(
             Localhost()
@@ -141,18 +136,9 @@ if __name__ == '__main__':
         )
     )
 
-    if 'print' in sys.argv:
-        program.print()
-        exit()
-
-    if 'block' in sys.argv:
-        program.block()
-        exit()
-
-    if 'unblock' in sys.argv:
-        program.unblock()
-        exit()
-
-    if len(sys.argv) == 1:
+    try:
+        argument = sys.argv[-1]
+        getattr(program, argument)()
+    except:
         program.help()
         exit()
