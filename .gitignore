@@ -1,3 +1,4 @@
 *.bak
 hosts
 etc_hosts
+__*

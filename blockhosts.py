@@ -49,9 +49,24 @@ class Lines(object):
                     continue
                 yield line.strip()
 
-    def write(self, content):
+    def _content(self):
+        with self._path.open('r') as file:
+            return file.read()
+
+    def _write(self, content):
         with self._path.open('w') as file:
             file.write(content)
+
+    def remove(self, predicate):
+        self._write(
+            '\n'.join(
+                line for line in self if not predicate(line)
+            )
+        )
+
+    def append(self, lines):
+        content = self._content() + '\n' + '\n'.join(lines)
+        self._write(content)
 
     def print(self):
         print(self._path.open().read())
@@ -70,23 +85,16 @@ class Program(object):
 
     def block(self):
         '''Blocks the hosts'''
-        self._hosts_file.write(
-            os.linesep.join(
-                [
-                    *[line for line in self._hosts_file],
-                    *[self._blocking_entry.entry(host) for host in self._hosts]
-                ]
-            )
+        self._hosts_file.append(
+            self._blocking_entry.entry(host) for host in self._hosts
         )
 
     def unblock(self):
         '''Unblocks the hosts'''
         hosts = list(self._hosts)
-        content = os.linesep.join(
-            line for line in self._hosts_file
-            if not any(host in line for host in hosts)
+        self._hosts_file.remove(
+            lambda line: any(host in line for host in hosts)
         )
-        self._hosts_file.write(content)
 
     def print(self):
         '''Displays the contents of the etc/hosts file'''
@@ -94,14 +102,21 @@ class Program(object):
 
     def hosts(self):
         '''List the hosts'''
-        print(os.linesep.join(self._hosts))
+        print('\n'.join(self._hosts))
 
     def help(self):
         '''Prints this help'''
+        script = os.path.basename(__file__)
+
         methods = [
             method for method in dir(self)
             if not method.startswith('_')
         ]
+        arguments = '|'.join(methods)
+        usage = f"{script} [test] {{{arguments}}}\n"
+        print("Usage:")
+        print(usage)
+
         for method in methods:
             print(method)
             print('\t', getattr(Program, method).__doc__)
@@ -139,6 +154,6 @@ if __name__ == '__main__':
     try:
         argument = sys.argv[-1]
         getattr(program, argument)()
-    except:
+    except AttributeError:
         program.help()
         exit()
