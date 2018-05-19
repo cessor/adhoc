@@ -15,6 +15,8 @@ from urllib.parse import urlparse
         script work for linux as well.
     [ ] I started procedural, moved to yegor style, and now it's quite
         procedural again. Could this be even more yegor style?
+    [ ] Read in the hosts from an external config file
+    [ ] Separate CLI from Program
 '''
 
 
