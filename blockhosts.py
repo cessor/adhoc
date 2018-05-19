@@ -2,6 +2,21 @@ import os
 from pathlib import Path
 from urllib.parse import urlparse
 
+'''
+    Blocks a couple of hosts by adding an entry to Windows' etc/hosts file
+    that point to 127.0.0.1. I use this script to stop me from procrastinating.
+
+    Todo:
+    [ ] The lines-Abstraction made sense along the way but it broke. Could it
+        be improved?
+    [ ] Add a comment to the hosts file, that these parts were added using
+        this script
+    [ ] An automated switch could replace the HostsFile Object and make this
+        script work for linux as well.
+    [ ] I started procedural, moved to yegor style, and now it's quite
+        procedural again. Could this be even more yegor style?
+'''
+
 
 class BlockingEntry(object):
     def __init__(self, domain):
@@ -139,9 +154,11 @@ if __name__ == '__main__':
         ),
         hosts=Hosts(
             Host(name) for name in [
+                "amazon.com",
+                "amazon.de",
                 "blog.fefe.de",
-                "news.ycombinator.com",
                 "facebook.com",
+                "news.ycombinator.com",
                 "rnz.de",
                 "spiegel.de",
                 "spon.de",
