@@ -1,0 +1,4 @@
+*.bak
+hosts
+etc_hosts
+tmp
