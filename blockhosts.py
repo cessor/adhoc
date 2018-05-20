@@ -45,10 +45,16 @@ class Host(object):
         if not self._has_subdomain():
             yield 'www.' + self._name
 
+    def __str__(self):
+        return self._name
+
 
 class Hosts(object):
     def __init__(self, hosts):
         self._hosts = hosts
+
+    def names(self):
+        return sorted(str(host) for host in self._hosts)
 
     def __iter__(self):
         for host in self._hosts:
@@ -119,7 +125,10 @@ class Program(object):
 
     def hosts(self):
         '''List the hosts'''
-        print('\n'.join(self._hosts))
+        print("Lists of Hosts to block.")
+        print("When blocking, www.* subdomains will be included automatically")
+        print()
+        print('\n'.join(self._hosts.names()))
 
     def help(self):
         '''Prints this help'''
