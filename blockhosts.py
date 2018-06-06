@@ -169,6 +169,7 @@ if __name__ == '__main__':
                 "amazon.de",
                 "blog.fefe.de",
                 "facebook.com",
+                "heise.de",
                 "news.ycombinator.com",
                 "rnz.de",
                 "spiegel.de",
