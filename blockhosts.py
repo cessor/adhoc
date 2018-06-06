@@ -17,6 +17,8 @@ from urllib.parse import urlparse
         procedural again. Could this be even more yegor style?
     [ ] Read in the hosts from an external config file
     [ ] Separate CLI from Program
+    [ ] Introduce a TEST Object
+    [ ] Implement Selective Unblocking. I just really needed AMAZON.com
 '''
 
 
