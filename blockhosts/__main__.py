@@ -133,11 +133,6 @@ class Lines(object):
         print(self._path.open().read())
 
 
-class Localhost(object):
-    def __str__(self):
-        return '127.0.0.1'
-
-
 class Program(object):
     def __init__(self, hosts_file, block_with, hosts):
         self._hosts_file = hosts_file
@@ -198,7 +193,7 @@ if __name__ == '__main__':
             HostsFile().path()
         ),
         block_with=BlockingEntry(
-            Localhost()
+            '127.0.0.1'
         ),
         hosts=Hosts(
             Host(name) for name in
