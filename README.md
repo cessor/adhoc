@@ -1,0 +1,4 @@
+blockhosts
+==========
+
+It blocks hosts.
