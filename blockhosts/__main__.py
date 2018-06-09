@@ -19,6 +19,7 @@ from urllib.parse import urlparse
     [ ] Introduce a TEST Object
     [ ] Implement Selective Unblocking. Sometimes
         I just really needed AMAZON.com
+    [ ] Introduce a Windows / Posix object, for post processing, e.g. flush dns
     [ ] Flush DNS after update:
         > ipconfig /flushdns
     [ ] I started procedural, moved to yegor style, and now it's quite
@@ -27,6 +28,7 @@ from urllib.parse import urlparse
 
 
 class BlockingEntry(object):
+
     def __init__(self, domain):
         self._domain = domain
 
@@ -37,6 +39,7 @@ class BlockingEntry(object):
 
 
 class Config(object):
+
     def __init__(self, path):
         self._path = path
 
@@ -53,6 +56,7 @@ class Config(object):
 
 
 class Host(object):
+
     def __init__(self, name):
         self._name = name
 
@@ -72,6 +76,7 @@ class Host(object):
 
 
 class Hosts(object):
+
     def __init__(self, hosts):
         self._hosts = hosts
 
@@ -86,6 +91,7 @@ class Hosts(object):
 class HostsFile(object):
     '''The system's hosts file that is used to block the hosts '''
     # https://en.wikipedia.org/wiki/Hosts_%28file%29
+
     def _posix(self):
         return Path('/etc/hosts')
 
@@ -100,6 +106,7 @@ class HostsFile(object):
 
 
 class Lines(object):
+
     def __init__(self, path):
         self._path = path
 
@@ -134,6 +141,7 @@ class Lines(object):
 
 
 class Program(object):
+
     def __init__(self, hosts_file, block_with, hosts):
         self._hosts_file = hosts_file
         self._blocking_entry = block_with
@@ -158,6 +166,9 @@ class Program(object):
 
     def hosts(self):
         '''Lists the hosts to block.
+
+         If available, reads from ~/.blockhostsrc, else a default list
+
          When blocking, www.* subdomains will be
          included automatically'''
         print('\n'.join(self._hosts.names()))
@@ -170,6 +181,7 @@ class Program(object):
             method for method in dir(self)
             if not method.startswith('_')
         ]
+
         arguments = '|'.join(public_methods)
         usage = f"{script} [test] {{{arguments}}}\n"
         print("Usage:")
@@ -181,7 +193,6 @@ class Program(object):
 
         print('test')
         print('\t Use a local file to test (./etc_hosts)')
-
 
 
 if __name__ == '__main__':
