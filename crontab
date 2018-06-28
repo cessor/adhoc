@@ -1,0 +1,29 @@
+# Blockhosts
+# =========
+
+# ┌────────── minute (0 - 59)
+# │ ┌──────── hour (0 - 23)
+# │ │ ┌────── day of month (1 - 31)
+# │ │ │ ┌──── month (1 - 12)
+# │ │ │ │ ┌── day of week (0 - 6 => Sunday - Saturday, or
+# │ │ │ │ │                1 - 7 => Monday - Sunday)
+# ↓ ↓ ↓ ↓ ↓
+# * * * * * command to be executed
+
+# blockhosts block just adds to the /etc/host file.
+# Make sure to counter block commands with unblock commands
+# Otherwise /etc/hosts will fill up.
+# Hosts are defined in ~/.blockhostsrc or
+# in the default script, see https://github.com/cessor/blockhosts
+
+# Block Hosts at 07:00
+0 7 * * * /usr/local/bin/blockhosts block
+
+# Unblock Hosts at 12:00
+30 12 * * * /usr/local/bin/blockhosts unblock
+
+# Block Hosts at 13:30
+30 13 * * * /usr/local/bin/blockhosts block
+
+# Unblock Hosts at 17:00
+0 17 * * * /usr/local/bin/blockhosts unblock
