@@ -9,6 +9,8 @@
 # │ │ │ │ │                1 - 7 => Monday - Sunday)
 # ↓ ↓ ↓ ↓ ↓
 # * * * * * command to be executed
+#
+# Source: https://en.wikipedia.org/wiki/Cron (as of 28.06.2018)
 
 # blockhosts block just adds to the /etc/host file.
 # Make sure to counter block commands with unblock commands
