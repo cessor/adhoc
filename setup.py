@@ -10,5 +10,10 @@ setup(
     author_email='py_blockhosts@spam.cessor.de',
     url='https://github.com/cessor/blockhosts/',
     packages=['blockhosts'],
-    scripts=['scripts/blockhosts', 'scripts/blockhosts.bat']
- )
+    scripts=['scripts/blockhosts',
+             'scripts/block',
+             'scripts/unblock',
+             'scripts/blockhosts.bat',
+             'scripts/block.bat',
+             'scripts/unblock.bat']
+)
