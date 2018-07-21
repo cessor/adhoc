@@ -2,6 +2,8 @@
 
 from distutils.core import setup
 
+
+
 setup(
     name='blockhosts',
     version='1.0',
@@ -10,6 +12,10 @@ setup(
     author_email='py_blockhosts@spam.cessor.de',
     url='https://github.com/cessor/blockhosts/',
     packages=['blockhosts'],
+    tests_require=[
+        'nose',
+        'kazookid'
+    ],
     scripts=['scripts/blockhosts',
              'scripts/block',
              'scripts/unblock',
