@@ -98,10 +98,7 @@ class Lines(object):
 
 
 class OperatingSystem():
-    def hosts_file(self):
-        return HostsFile(self._path())
-
-    def _path(self):
+    def etc_hosts_path(self):
         if os.name == 'posix':
             return self._posix()
         return self._windows()
@@ -177,7 +174,7 @@ if __name__ == '__main__':
         hosts_file=HostsFile(
             File(
                 Path('./etc_hosts') if 'test' in sys.argv else
-                OperatingSystem().hosts_file()
+                OperatingSystem().etc_hosts_path()
             )
         ),
         block_with=BlockingEntry(
